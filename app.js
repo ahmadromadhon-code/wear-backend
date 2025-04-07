@@ -26,15 +26,16 @@ async function connectDB() {
     isConnected = true;
     console.log('✅ MongoDB connected');
   } catch (err) {
-    console.error('❌ MongoDB error:', err);
+    console.error('❌ MongoDB connection failed:', err);
   }
 }
 
-// Middleware untuk koneksi sebelum setiap request (optional, tapi aman)
+// Middleware yang memastikan koneksi sebelum tiap request
 app.use(async (req, res, next) => {
   await connectDB();
   next();
 });
+
 
 // API Routing
 app.use('/api/products', productRoutes);
