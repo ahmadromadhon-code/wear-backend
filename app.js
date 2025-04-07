@@ -36,7 +36,6 @@ app.use(async (req, res, next) => {
   next();
 });
 
-
 // API Routing
 app.use('/api/products', productRoutes);
 
