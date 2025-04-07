@@ -9,6 +9,7 @@ router.get('/', async (req, res) => {
     const products = await Product.find();
     res.json(products);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Gagal mengambil produk' });
   }
 });
@@ -17,6 +18,11 @@ router.get('/', async (req, res) => {
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { name, price, description, sizes } = req.body;
+
+    if (!name || !price || !description) {
+      return res.status(400).json({ error: 'Data produk tidak lengkap' });
+    }
+
     const image = req.file?.path;
     const public_id = req.file?.filename;
 
@@ -26,7 +32,7 @@ router.post('/', upload.single('image'), async (req, res) => {
       description,
       image,
       public_id,
-      sizes: sizes.split(',').map(size => size.trim())
+      sizes: sizes ? sizes.split(',').map(size => size.trim()) : []
     });
 
     await newProduct.save();
@@ -45,7 +51,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
 
     if (!product) return res.status(404).json({ error: 'Produk tidak ditemukan' });
 
-    // Jika ada gambar baru, hapus gambar lama dari Cloudinary
+    // Hapus gambar lama jika ada dan ada upload baru
     if (req.file && product.public_id) {
       await cloudinary.uploader.destroy(product.public_id);
     }
@@ -54,7 +60,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
       name,
       price,
       description,
-      sizes: sizes.split(',').map(size => size.trim())
+      sizes: sizes ? sizes.split(',').map(size => size.trim()) : product.sizes
     };
 
     if (req.file) {
@@ -74,9 +80,10 @@ router.put('/:id', upload.single('image'), async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
+
     if (!product) return res.status(404).json({ error: 'Produk tidak ditemukan' });
 
-    // Hapus gambar dari Cloudinary
+    // Hapus gambar dari Cloudinary jika ada
     if (product.public_id) {
       await cloudinary.uploader.destroy(product.public_id);
     }
@@ -84,6 +91,7 @@ router.delete('/:id', async (req, res) => {
     await product.deleteOne();
     res.json({ message: 'Produk berhasil dihapus' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Gagal menghapus produk' });
   }
 });
