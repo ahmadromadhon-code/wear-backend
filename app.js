@@ -15,15 +15,10 @@ app.use(cors());
 app.use(express.json());
 
 // Routing API
-app.use('/api/products', productRoutes);
-
-// Serve frontend statis
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-// Redirect root ke index.html
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  res.json({ message: 'API is running' });
 });
+
 
 // 404 Handler
 app.use((req, res, next) => {
