@@ -2,10 +2,11 @@
     "name": "backend",
     "version": "1.0.0",
     "description": "Backend for fashionstore app",
-    "main": "index.js",
+    "main": "api/index.js",
     "scripts": {
       "start": "node index.js",
       "dev": "nodemon index.js"
+      "postinstall": "some-buggy-script"
     },
     "engines": {
       "node": "20.x",
