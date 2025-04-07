@@ -1,9 +1,7 @@
 require('dotenv').config();
 
-const app = require('./app');
+const app = require('../app');
 
-const PORT = process.env.PORT || 5000;
+// Jangan pakai app.listen, cukup export app-nya
+module.exports = app;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
